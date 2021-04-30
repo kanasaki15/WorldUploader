@@ -7,8 +7,8 @@ import net.lingala.zip4j.model.enums.CompressionMethod;
 import okhttp3.*;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Scanner;
 
 public class WorldUploader {
@@ -16,9 +16,20 @@ public class WorldUploader {
     public static void main(String[] args) {
 
         try {
-            System.out.println("ワールドのフォルダがあるsavesフォルダを指定してください。\n(例：C:\\user\\AppData\\Roaming\\.minecraft\\saves)");
+
+            System.out.println("Minecraft IDを入力してEnterを押してください。\n(例: 7mi_chan)");
             Scanner scanner1 = new Scanner(System.in);
-            String pass = scanner1.next();
+            String minecraftID = scanner1.next();
+
+            System.out.println("スタート位置を入力してください。なければそのままEnterを押してください。\n(例: 0 100 0)");
+            Scanner scanner2 = new Scanner(System.in);
+            String temp = scanner2.nextLine();
+            String d = new String(Base64.getEncoder().encode(temp.getBytes(StandardCharsets.UTF_8)));
+
+
+            System.out.println("ワールドのフォルダがあるsavesフォルダを指定してください。\n(例：C:\\user\\AppData\\Roaming\\.minecraft\\saves)");
+            Scanner scanner3 = new Scanner(System.in);
+            String pass = scanner3.next();
 
             File file = new File(pass);
             if (!file.exists()) {
@@ -46,8 +57,8 @@ public class WorldUploader {
                 i++;
             }
 
-            Scanner scanner2 = new Scanner(System.in);
-            int num = scanner2.nextInt();
+            Scanner scanner4 = new Scanner(System.in);
+            int num = scanner4.nextInt();
 
             System.out.println("ワールド選択完了 zip化します...");
             ZipParameters params = new ZipParameters();
@@ -67,7 +78,7 @@ public class WorldUploader {
             System.out.println("zip化完了 アップロードします...");
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url("https://n7mn.xyz/upload.php")
+                    .url("https://n7mn.xyz/upload.php?id="+minecraftID+"&d="+d)
                     .post(RequestBody.create(new File("./temp.zip"), MediaType.parse("application/zip")))
                     .build();
 
